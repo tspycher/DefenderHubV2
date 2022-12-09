@@ -15,12 +15,11 @@ bool PageEngine::needs_display_update() {
 
 
 void PageEngine::update_display() {
-  show_gauge(0,20, oled.width()/2, 35, "Oil Temp", (int)random(0,180), 0, 180);
-  show_gauge(0,65, oled.width()/2, 35, "Oil Pres", (int)random(0,180), 0, 180);
+  int margin_top = 20;
+  int h = 50;
+  show_gauge(0,margin_top, oled.width()/2, h-5, "OilT", (int)random(0,180), 0, 180);
+  show_gauge(0,margin_top+h, oled.width()/2, h-5, "OilP", (int)random(0,180), 0, 180);
 
-  show_gauge(64,20, oled.width()/2, 35, "Coolant", (int)random(0,180), 0, 180);
-
-  show_gauge(64,65, oled.width()/2, 35, "manif.", (int)random(0,180), 0, 180);
-
-  
+  show_gauge(oled.width()/2,margin_top, oled.width()/2, h-5, "water", (int)random(0,180), 0, 180);
+  show_gauge(oled.width()/2,margin_top+h, oled.width()/2, h-5, "mani", (int)random(0,180), 0, 180);
 }

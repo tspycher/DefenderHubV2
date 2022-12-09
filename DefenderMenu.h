@@ -10,6 +10,8 @@
 #include "Defender.h"
 #include "Logos.h"
 #include "PageTemperature.h"
+#include "PageGps.h"
+#include "PageEngine.h"
 #include "PageVersion.h"
 
 class DefenderMenu {
@@ -27,7 +29,9 @@ public:
   int get_num_pages() {return num_pages;}
   Page* get_current_page();
 
-  void update_display(bool);
+  void update_display(bool force = false);
+  bool display_update_required();
+
   void show_message(const char message[], const char message2[]); 
 
 private:

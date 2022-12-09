@@ -21,6 +21,15 @@ public:
 protected:
     Adafruit_SSD1351& oled;
     Defender& car;
+
+    void show_gauge(int x, int y, int width, int height, const char label[], float value, float min, float max);
+    
+    void update_label(const char label[], const String value, int x, int y, int h, bool big_value=false, int color=0x07E0);
+    void update_label(const char label[], double value, int x, int y, int h, bool big_value=false, int color=0x07E0);
+    void update_label(const char label[], int value, int x, int y, int h, bool big_value=false, int color=0x07E0);
+private:
+    void update_label_basics(const char label[], const char value[], int x, int y, int h, bool big_value=false, int color=0x07E0);
+    void draw_centre_string(const char *buf, int x, int y);
 };
 
 #endif

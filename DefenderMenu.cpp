@@ -1,7 +1,7 @@
 #include "DefenderMenu.h"
 
 
-DefenderMenu::DefenderMenu(Adafruit_SSD1351 &oled, Defender &car) : oled(oled), car(car), num_pages(2), current_page_index(0), interrupt_switch_page(false) {
+DefenderMenu::DefenderMenu(Adafruit_SSD1351 &oled, Defender &car) : oled(oled), car(car), num_pages(4), current_page_index(0), interrupt_switch_page(false) {
 
 }
 
@@ -11,7 +11,13 @@ void DefenderMenu::begin() {
   pages[0] = new PageTemperature(oled, car);
   Serial.println("****** initialized Temperature Page");
 
-  pages[1] = new PageVersion(oled, car);
+  pages[1] = new PageEngine(oled, car);
+  Serial.println("****** initialized Engine Page");
+
+  pages[2] = new PageGps(oled, car);
+  Serial.println("****** initialized GPS Page");
+
+  pages[3] = new PageVersion(oled, car);
   Serial.println("****** initialized Version Page");
 
   oled.begin();
@@ -74,11 +80,10 @@ Page* DefenderMenu::get_current_page() {
   return pages[current_page_index];
 }
 
-void DefenderMenu::update_display(bool force = false) {
+void DefenderMenu::update_display(bool force) {
   Page *p = get_current_page();
   
   if(p->needs_display_update() || force) {
-    Serial.println("DO IT");
     p->update_display();
   }
 }
@@ -108,3 +113,8 @@ bool DefenderMenu::perform_interrupt_switch_page() {
     }
     return false;
 }
+
+bool DefenderMenu::display_update_required() {
+  return get_current_page()->needs_display_update();
+}
+

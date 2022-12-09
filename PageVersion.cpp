@@ -10,10 +10,11 @@ String PageVersion::get_page_name() {
 
 
 bool PageVersion::needs_display_update() {
-  return true;
+  return false;
 }
 
 void PageVersion::update_display() {
-  Serial.println("update Version Display");
-  oled.fillScreen(RED);
+  update_label("Version", 1.0, 0,20,7, false);
+  update_label("Buildtime", "unknown", 0,45,7, false);
+  update_label("Copyright", "TSpycher", 0,70,7, false);
 }

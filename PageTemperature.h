@@ -6,6 +6,8 @@
 #define _DEFENDERHUB_TEMPERATURE_H
 
 #include "Page.h"
+#include "Logos.h"
+
 
 class PageTemperature : public Page {
 public:
@@ -15,6 +17,9 @@ public:
     void update_display();
     String get_page_name();
 
+private:
+  float inside_temperature;
+  float outside_temperature;
 };
 
 #endif //DEFENDERHUB_TEMPERATURE_H

@@ -1,3 +1,5 @@
+#define PSEUDO_THREADS 3
+
 #define SCREEN_WIDTH  128
 #define SCREEN_HEIGHT 128 
 
@@ -39,22 +41,19 @@ void button_pressed() {
 
 
 void button_debouncer() {
-    if (menu.get_interrupt_switch_page())
-        return;
-    
-    //noInterrupts();
-    
-    int diff = millis() - last_button_signal;
-    int diff2 = millis() - last_button_press;
+  if (menu.get_interrupt_switch_page())
+      return;    
+  int diff = millis() - last_button_signal;
+  int diff2 = millis() - last_button_press;
 
-    last_button_signal = millis();
+  last_button_signal = millis();
 
-    if (diff >= 50 and diff <= BUTTON_SHORT_PRESS) {
-        if (diff2 >= BUTTON_SHORT_PRESS/4) {
-            button_pressed();
-            last_button_press = millis();
-        }
-    }
+  if (diff >= 50 and diff <= BUTTON_SHORT_PRESS) {
+      if (diff2 >= BUTTON_SHORT_PRESS/4) {
+          button_pressed();
+          last_button_press = millis();
+      }
+  }
 }
 
 void setup() {
@@ -70,13 +69,41 @@ void setup() {
   menu.begin();
 }
 
-void loop() {
-  ++looper;
+void loop_thread0() {
   if(menu.perform_interrupt_switch_page()) {
     Serial.println("Performed Page Switch");
-
-  } else {
-    Serial.println("Idle");
-    delay(1000);
   }
+}
+
+void loop_thread1() {
+    if(menu.display_update_required()) {
+      menu.update_display(true);
+      delay(500);
+    }
+}
+
+void loop_thread2() {
+  defender.update();
+}
+
+void loop() {
+  ++looper;
+
+  int thread = looper % PSEUDO_THREADS;
+    // Loop-Switching to simulate multi threading
+    switch (thread) {
+        case 0:
+            loop_thread0();
+            break;
+        case 1:
+            loop_thread1();
+            break;
+        case 2:
+            loop_thread2();
+            break;
+        default:
+            Serial.println("No thread registered for id: "+thread);
+            break;
+    }
+    delay(500);
 }
