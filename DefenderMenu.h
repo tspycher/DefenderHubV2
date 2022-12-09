@@ -11,6 +11,7 @@
 #include "Logos.h"
 #include "PageTemperature.h"
 #include "PageGps.h"
+#include "PageCompass.h"
 #include "PageEngine.h"
 #include "PageVersion.h"
 

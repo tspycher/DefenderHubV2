@@ -27,9 +27,10 @@ protected:
     void update_label(const char label[], const String value, int x, int y, int h, bool big_value=false, int color=0x07E0);
     void update_label(const char label[], double value, int x, int y, int h, bool big_value=false, int color=0x07E0);
     void update_label(const char label[], int value, int x, int y, int h, bool big_value=false, int color=0x07E0);
+
+    void draw_centre_string(const char *buf, int x, int y);
 private:
     void update_label_basics(const char label[], const char value[], int x, int y, int h, bool big_value=false, int color=0x07E0);
-    void draw_centre_string(const char *buf, int x, int y);
 };
 
 #endif

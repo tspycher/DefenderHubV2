@@ -32,8 +32,8 @@ float Defender::get_inside_temperature() {
 }
 
 float Defender::get_outside_temperature() {
-  return (float)random(-10, 39);
-  //return outside_temperature;
+  //return (float)random(-10, 39);
+  return outside_temperature;
 }
 
 double Defender::get_latitude() {

@@ -1,24 +1,33 @@
 #include "DefenderMenu.h"
 
 
-DefenderMenu::DefenderMenu(Adafruit_SSD1351 &oled, Defender &car) : oled(oled), car(car), num_pages(4), current_page_index(0), interrupt_switch_page(false) {
+DefenderMenu::DefenderMenu(Adafruit_SSD1351 &oled, Defender &car) : oled(oled), car(car), num_pages(0), current_page_index(0), interrupt_switch_page(false) {
 
 }
 
 void DefenderMenu::begin() {
   Serial.println("*** initalizing Defender Menu Class");
-  pages = new Page*[num_pages];
-  pages[0] = new PageTemperature(oled, car);
+  pages = new Page*[10];
+
+  pages[num_pages] = new PageTemperature(oled, car);
   Serial.println("****** initialized Temperature Page");
+  ++num_pages;
 
-  pages[1] = new PageEngine(oled, car);
+  pages[num_pages] = new PageEngine(oled, car);
   Serial.println("****** initialized Engine Page");
+  ++num_pages;
 
-  pages[2] = new PageGps(oled, car);
+  pages[num_pages] = new PageCompass(oled, car);
+  Serial.println("****** initialized Compass Page");
+  ++num_pages;
+  
+  pages[num_pages] = new PageGps(oled, car);
   Serial.println("****** initialized GPS Page");
+  ++num_pages;
 
-  pages[3] = new PageVersion(oled, car);
+  pages[num_pages] = new PageVersion(oled, car);
   Serial.println("****** initialized Version Page");
+  ++num_pages;
 
   oled.begin();
   oled.fillScreen(BLACK);
