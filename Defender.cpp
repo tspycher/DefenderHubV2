@@ -1,7 +1,83 @@
 #include "defender.h"
 
-Defender::Defender() : outside_temperature(0.0), inside_temperature(0.0), latitude(0.0), longitude(0.0), altitude(0.0), gpsspeed(0.0), course(0.0), satellites(999) {
+float Defender::outside_temperature = 0.0;
+float Defender::outside_humidity = 0.0;
+float Defender::inside_temperature = 0.0;
+float Defender::inside_humidity = 0.0;
 
+Defender::Defender() : latitude(0.0), longitude(0.0), altitude(0.0), gpsspeed(0.0), course(0.0), satellites(999) {
+
+}
+
+void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
+  bool debug = true;
+
+  if(central.hasManufacturerData() && central.hasAdvertisementData()) {
+    // Check PDF From: https://www.bluetooth.com/specifications/assigned-numbers/
+    // 0x0499 Ruuvi Innovations Ltd.
+    // Decimal: 4 153
+    uint8_t manufacturer[central.manufacturerDataLength()];
+    central.manufacturerData(manufacturer, central.manufacturerDataLength());
+    if((int)manufacturer[0] == 153 && (int)manufacturer[1] == 4) {
+      Serial.print("Discovered event from RuuviTag with Mac: ");
+      Serial.println(central.address());
+    } else {
+      if (debug) {
+        Serial.print("Advertisement is from an unknown Device with Manufacturer Id: ");
+        Serial.print((int)manufacturer[1], HEX);
+        Serial.print((int)manufacturer[0], HEX);
+        Serial.println();
+      }
+      return;
+    }
+  } else {
+    if(debug) {
+      Serial.print("Discovered Device with mac: ");
+      Serial.print(central.address());
+      Serial.println(" but does no advertised data or manufacturer data");
+    }
+     // no manufacturer Data available
+    return;
+  }
+
+  // Load the Advertised Data and store the values
+  int l = central.advertisementDataLength();
+  uint8_t value[l];
+  central.advertisementData(value, l);
+
+  int l_payload = (int)value[3];
+  int format = (int)value[7];
+  int payload_start = 8;
+
+  float temperature, humidity;
+
+  if (format == 5) { // Data Format 5 Protocol Specification (RAWv2)
+    // https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_05.md
+
+    temperature = (((signed char)value[payload_start] << 8) | ((signed char)value[payload_start + 1])) * 0.005; // Celcius
+    humidity = (((signed char)value[payload_start+2] << 8) | ((signed char)value[payload_start + 3])) * 0.0025; // Percent
+
+    Serial.print("Temperature: ");
+    Serial.print(temperature);
+    Serial.print("C ");
+    Serial.print("Humidity: ");
+    Serial.print(humidity);
+    Serial.print("% ");
+    Serial.println();
+  } else {
+    Serial.print("Unknown Data Format from RuuviTag received: ");
+    Serial.println(format);
+  }
+
+  if(central.address() == "f2:40:f1:bc:69:e0") {
+    inside_temperature = temperature;
+    inside_humidity = humidity;
+  } else if(central.address() == "00:00:00:00::00:00") {
+    outside_temperature = temperature;
+    outside_humidity = humidity;
+  } else {
+    Serial.print("This RuuviTag is unkown to me");
+  }
 }
 
 void Defender::begin() {
@@ -14,9 +90,22 @@ void Defender::begin() {
   gps = new TinyGPSPlus();
   Serial1.begin(9600);
   Serial.println("***** initalized gps classes");
+
+
+  if (!BLE.begin()) {
+    Serial.println("starting Bluetooth® Low Energy module failed!");
+    while (1);
+  }
+
+  Serial.println("***** initalized ble module");
+  BLE.setEventHandler(BLEDiscovered, blePeripheralDiscoveredHandler);
+  BLE.scan();
+  Serial.println("***** registered ble event handler and startetd scanning");
 }
 
-void Defender::update(bool radio, bool gps, bool obd) {
+
+
+void Defender::update(bool radio, bool gps, bool obd, bool ble) {
   if(radio)
     read_433();
   
@@ -25,15 +114,27 @@ void Defender::update(bool radio, bool gps, bool obd) {
   
   if(obd)
     read_obd();
+  
+  if(ble)
+    read_ble();
 }
 
 float Defender::get_inside_temperature() {
   return inside_temperature;
+  // return (float)random(-10, 39);
 }
 
 float Defender::get_outside_temperature() {
-  //return (float)random(-10, 39);
   return outside_temperature;
+  // return (float)random(-10, 39);
+}
+
+float Defender::get_outside_humidity() {
+  return outside_humidity;
+}
+
+float Defender::get_inside_humidity() {
+  return inside_humidity;
 }
 
 double Defender::get_latitude() {
@@ -85,6 +186,10 @@ void Defender::read_gps() {
   if (gps->speed.isValid()) {
     gpsspeed = gps->speed.kmph();
   }
+}
+
+void Defender::read_ble() {
+  BLE.poll(1000);
 }
 
 void Defender::read_obd() {

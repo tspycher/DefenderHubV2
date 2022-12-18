@@ -57,19 +57,24 @@ void button_debouncer() {
 }
 
 void setup() {
-  delay(500);
   Serial.begin(9600);
-  delay(500); // let the IDE connect to the Serial port
-  Serial.println("*** Starting up Defender HUB");
+  //while (!Serial);
+
+  Serial.println("* Starting up Defender HUB");
 
   pinMode(BUTTON, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(BUTTON), button_debouncer, RISING);
 
   defender.begin();
   menu.begin();
+  Serial.println("* Starting completed");
+
 }
 
 void loop_thread0() {
+  if(looper % 20 == 0) {
+    Serial.println("I'm Alive");
+  }
   if(menu.perform_interrupt_switch_page()) {
     Serial.println("Performed Page Switch");
   }
@@ -83,7 +88,7 @@ void loop_thread1() {
 }
 
 void loop_thread2() {
-  defender.update();
+  defender.update(false, true, true, true);
 }
 
 void loop() {

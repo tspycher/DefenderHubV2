@@ -13,18 +13,23 @@
 #define IDENTIFIER_TEMPERATURE 11
 
 #include <Arduino.h>
+#include <ArduinoBLE.h>
 #include <RCSwitch.h>
 #include <TinyGPSPlus.h>
+
+
 
 class Defender {
 public:
   Defender();
   void begin();
 
-  void update(bool radio = true, bool gps = true, bool obd = true);
+  void update(bool radio = true, bool gps = true, bool obd = true, bool ble = true);
 
   float get_outside_temperature();
   float get_inside_temperature();
+  float get_outside_humidity();
+  float get_inside_humidity();
 
   double get_latitude();
   double get_longitude();
@@ -34,15 +39,21 @@ public:
   double get_course();
   int get_satellites();
 
+  static void blePeripheralDiscoveredHandler(BLEDevice central);
+
+  static float outside_temperature;
+  static float outside_humidity;
+  static float inside_temperature;
+  static float inside_humidity;
+
 private:
   RCSwitch *receiver;
   TinyGPSPlus *gps;
 
   void read_433();
+  void read_ble();
   void read_gps();
   void read_obd();
-  float outside_temperature;
-  float inside_temperature;
 
   double latitude;
   double longitude;
