@@ -13,7 +13,7 @@
 
 #define BUTTON 1
 
-
+#include "Properties.h"
 #include <Arduino.h>
 #include <SPI.h>
 #include <Adafruit_SSD1351.h>
@@ -24,6 +24,7 @@
 
 
 bool devmode = true;
+bool iotsupport = false;
 
 unsigned long looper = 0;
 long int last_button_signal = 0;
@@ -81,6 +82,14 @@ void setup() {
   pinMode(BUTTON, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(BUTTON), button_debouncer, RISING);
 
+  if(iotsupport) {
+    // Connect to Arduino IoT Cloud
+    Serial.println("*** initializing Arduino Cloud Connection");
+    ArduinoCloud.begin(ArduinoIoTPreferredConnection);
+    setDebugMessageLevel(2);
+    ArduinoCloud.printDebugInfo();
+  }
+
   defender.begin();
   menu.begin();
   equipment.begin();
@@ -124,6 +133,9 @@ void loop_thread2() {
 }
 
 void loop() {
+  if(iotsupport) {
+    ArduinoCloud.update();
+  }
   equipment.check_button_states();
   ++looper;
 
