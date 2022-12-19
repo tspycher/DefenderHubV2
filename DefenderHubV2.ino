@@ -20,16 +20,31 @@
 #include <Adafruit_GFX.h>
 #include "Defender.h"
 #include "DefenderMenu.h"
+#include "Equipment.h"
+
+
+bool devmode = true;
 
 unsigned long looper = 0;
 long int last_button_signal = 0;
 long int last_button_press = 0;
 
+// CONFIGURING RELAYS
+struct Relay relay0 = {0,0, "Radio", true, false, false};
+struct Relay relay1 = {1,1, "Light1", false, false, true};
+struct Relay relay2 = {2,2, "Light2", false, false, true};
+struct Relay relay3 = {3,3, "Light3", false, false, true};
+struct Relay relay4 = {4,4, "Light Inside", false, false, true};
+struct Relay relay5 = {5,5, "Other", false, false, true};
+struct Relay relay6 = {6,6, "This", false, false, true};
+struct Relay relay7 = {7,7, "That", false, false, true};
+Relay relays[] = {relay0,relay1, relay2, relay3, relay4, relay5, relay6, relay7};
 
 
 Adafruit_SSD1351 oled = Adafruit_SSD1351(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, CS_PIN, DC_PIN, RST_PIN);
 Defender defender = Defender();
 DefenderMenu menu = DefenderMenu(oled, defender);
+Equipment equipment = Equipment(menu, relays, 8);
 
 
 void button_pressed() {
@@ -57,9 +72,10 @@ void button_debouncer() {
 }
 
 void setup() {
-  Serial.begin(9600);
-  while (!Serial);
-
+  if(devmode) {
+    Serial.begin(9600);
+    while (!Serial);
+  }
   Serial.println("* Starting up Defender HUB");
 
   pinMode(BUTTON, INPUT_PULLUP);
@@ -67,6 +83,7 @@ void setup() {
 
   defender.begin();
   menu.begin();
+  equipment.begin();
   Serial.println("* Starting completed");
 
 }
@@ -86,6 +103,13 @@ void loop_thread1() {
     }
 }
 
+void test_equipment() {
+    for(int i = 0; i < 8; ++i) {
+    equipment.toggle(i);
+    delay(200);
+  }
+}
+
 void loop_thread2() {
   bool radio, gps, obd, ble;
   radio = true;
@@ -96,9 +120,11 @@ void loop_thread2() {
   menu.show_status_indicator(GREEN);
   defender.update(radio, gps, obd, ble);
   menu.hide_status_indicator();
+
 }
 
 void loop() {
+  equipment.check_button_states();
   ++looper;
 
   int thread = looper % PSEUDO_THREADS;

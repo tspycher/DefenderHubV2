@@ -89,6 +89,12 @@ Page* DefenderMenu::get_current_page() {
   return pages[current_page_index];
 }
 
+void DefenderMenu::redraw_display() {
+  draw_base_menu(get_current_page()->get_page_name().c_str());
+  update_display(true);
+}
+
+
 void DefenderMenu::update_display(bool force) {
   Page *p = get_current_page();
   

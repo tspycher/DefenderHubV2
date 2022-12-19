@@ -29,7 +29,8 @@ public:
 
   int get_num_pages() {return num_pages;}
   Page* get_current_page();
-
+  
+  void redraw_display();
   void update_display(bool force = false);
   bool display_update_required();
 
