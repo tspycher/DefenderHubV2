@@ -58,7 +58,7 @@ void button_debouncer() {
 
 void setup() {
   Serial.begin(9600);
-  //while (!Serial);
+  while (!Serial);
 
   Serial.println("* Starting up Defender HUB");
 
@@ -83,12 +83,19 @@ void loop_thread0() {
 void loop_thread1() {
     if(menu.display_update_required()) {
       menu.update_display(true);
-      delay(500);
     }
 }
 
 void loop_thread2() {
-  defender.update(false, true, true, true);
+  bool radio, gps, obd, ble;
+  radio = true;
+  gps = true;
+  obd = true;
+  ble = true;
+
+  menu.show_status_indicator(GREEN);
+  defender.update(radio, gps, obd, ble);
+  menu.hide_status_indicator();
 }
 
 void loop() {
@@ -96,19 +103,19 @@ void loop() {
 
   int thread = looper % PSEUDO_THREADS;
     // Loop-Switching to simulate multi threading
-    switch (thread) {
-        case 0:
-            loop_thread0();
-            break;
-        case 1:
-            loop_thread1();
-            break;
-        case 2:
-            loop_thread2();
-            break;
-        default:
-            Serial.println("No thread registered for id: "+thread);
-            break;
-    }
-    delay(500);
+  switch (thread) {
+      case 0:
+          loop_thread0();
+          break;
+      case 1:
+          loop_thread1();
+          break;
+      case 2:
+          loop_thread2();
+          break;
+      default:
+          Serial.println("No thread registered for id: "+thread);
+          break;
+  }
+  delay(500);
 }

@@ -86,7 +86,6 @@ void Defender::begin() {
   receiver->enableReceive(RX_PIN);  // Receiver on interrupt 0 => that is pin #2
   Serial.println("***** initalized 433mhz receiver");
 
-
   gps = new TinyGPSPlus();
   Serial1.begin(9600);
   Serial.println("***** initalized gps classes");
@@ -101,22 +100,43 @@ void Defender::begin() {
   BLE.setEventHandler(BLEDiscovered, blePeripheralDiscoveredHandler);
   BLE.scan();
   Serial.println("***** registered ble event handler and startetd scanning");
+
+
+  WiFiDrv::pinMode(25, OUTPUT);
+  WiFiDrv::pinMode(26, OUTPUT);
+  WiFiDrv::pinMode(27, OUTPUT);
+
+  // some fancy loading indicator
+  for(int i = 0; i < 150; ++i) {
+    set_internal_rgb_led(0,i,0);
+    delay(5);
+  }
+  set_internal_rgb_led(0,0,0);
+
+  Serial.println("***** internal LED initialized");
+
 }
 
-
-
 void Defender::update(bool radio, bool gps, bool obd, bool ble) {
-  if(radio)
+  int max_brightnes = 20;
+  if(radio) {
+    set_internal_rgb_led(max_brightnes,0,0);
     read_433();
-  
-  if(gps)
+  }
+  if(gps) {
+    set_internal_rgb_led(max_brightnes,max_brightnes,0);
     read_gps();
-  
-  if(obd)
+  }
+  if(obd) {
+    set_internal_rgb_led(0, max_brightnes, max_brightnes);
     read_obd();
-  
-  if(ble)
+  }
+  if(ble) {
+    set_internal_rgb_led(0,0,max_brightnes);
     read_ble();
+  }
+  set_internal_rgb_led(0,0,0);
+
 }
 
 float Defender::get_inside_temperature() {
@@ -189,7 +209,7 @@ void Defender::read_gps() {
 }
 
 void Defender::read_ble() {
-  BLE.poll(1000);
+  BLE.poll();
 }
 
 void Defender::read_obd() {
@@ -220,4 +240,10 @@ void Defender::read_433() {
         break;
     }
   }
+}
+
+void Defender::set_internal_rgb_led(int r, int g, int b) {
+  WiFiDrv::analogWrite(25, r); // red
+  WiFiDrv::analogWrite(26, g); // green
+  WiFiDrv::analogWrite(27, b); // blue
 }

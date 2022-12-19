@@ -17,6 +17,10 @@
 #include <RCSwitch.h>
 #include <TinyGPSPlus.h>
 
+// to interact with the LED
+#include <WiFiNINA.h>
+#include <utility/wifi_drv.h>
+
 
 
 class Defender {
@@ -49,6 +53,8 @@ public:
 private:
   RCSwitch *receiver;
   TinyGPSPlus *gps;
+  
+  void set_internal_rgb_led(int r = 0, int g = 0, int b = 0);
 
   void read_433();
   void read_ble();

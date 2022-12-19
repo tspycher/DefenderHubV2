@@ -34,9 +34,13 @@ public:
   bool display_update_required();
 
   void show_message(const char message[], const char message2[]); 
+  void show_status_indicator(int color = RED);
+  void hide_status_indicator();
+  bool is_status_indicator_shown() { return status_indicator_shown; }
 
 private:
   bool interrupt_switch_page;
+  bool status_indicator_shown;
   Page **pages;
   int num_pages;
   int current_page_index;

@@ -1,7 +1,7 @@
 #include "DefenderMenu.h"
 
 
-DefenderMenu::DefenderMenu(Adafruit_SSD1351 &oled, Defender &car) : oled(oled), car(car), num_pages(0), current_page_index(0), interrupt_switch_page(false) {
+DefenderMenu::DefenderMenu(Adafruit_SSD1351 &oled, Defender &car) : oled(oled), car(car), num_pages(0), current_page_index(0), interrupt_switch_page(false), status_indicator_shown(false) {
 
 }
 
@@ -127,3 +127,12 @@ bool DefenderMenu::display_update_required() {
   return get_current_page()->needs_display_update();
 }
 
+void DefenderMenu::show_status_indicator(int color) {
+  status_indicator_shown = true;
+  oled.fillCircle(oled.width()-5, oled.height()-5, 2, color);
+}
+
+void DefenderMenu::hide_status_indicator() { 
+  show_status_indicator(BLACK);
+  status_indicator_shown = false;
+}
