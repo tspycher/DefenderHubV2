@@ -37,7 +37,7 @@ void Page::show_gauge(int x, int y, int width, int height, const char label[], f
 }
 
 void Page::update_label_basics(const char label[], const char value[], int x, int y, int h, bool big_value, int color) {
-    int line_space = 2;
+    int line_space = 1;
     // reset old values
     oled.fillRect(x, y, 128-x, (2*h)+line_space, 0x0000);
 

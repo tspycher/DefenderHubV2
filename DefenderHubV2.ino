@@ -13,7 +13,7 @@
 
 #define BUTTON 1
 
-#include "Properties.h"
+//#include "Properties.h"
 #include <Arduino.h>
 #include <SPI.h>
 #include <Adafruit_SSD1351.h>
@@ -22,6 +22,7 @@
 #include "DefenderMenu.h"
 #include "Equipment.h"
 #include "Colors.h"
+//#include <ArduinoBLE.h>
 
 
 bool devmode = true;
@@ -32,7 +33,13 @@ long int last_button_signal = 0;
 long int last_button_press = 0;
 
 
-
+/*void blePeripheralDiscoveredHandler(BLEDevice central) {
+  if(central.address() == "eb:4b:fa:41:fa:c5") {
+    Serial.println("BINGOOO");
+  } else {
+    Serial.println(central.address());
+  }
+}*/
 
 Adafruit_SSD1351 oled = Adafruit_SSD1351(SCREEN_WIDTH, SCREEN_HEIGHT, &SPI, CS_PIN, DC_PIN, RST_PIN);
 Defender defender = Defender();
@@ -97,19 +104,27 @@ void setup() {
   pinMode(BUTTON, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(BUTTON), button_debouncer, RISING);
 
-  if(iotsupport) {
+  /*if(iotsupport) {
     // Connect to Arduino IoT Cloud
     Serial.println("*** initializing Arduino Cloud Connection");
     ArduinoCloud.begin(ArduinoIoTPreferredConnection);
     setDebugMessageLevel(2);
     ArduinoCloud.printDebugInfo();
+  }*/
+
+  /*if (!BLE.begin()) {
+    Serial.println("starting Bluetooth® Low Energy module failed!");
+    while (1);
   }
+
+  BLE.setEventHandler(BLEDiscovered, blePeripheralDiscoveredHandler);
+  BLE.scan();
+  */
 
   defender.begin();
   menu.begin();
   defender.equipment.registerEquipmentHandler(equipment_button_pressed);
   Serial.println("* Starting completed");
-
 }
 
 void loop_thread0() {
@@ -148,9 +163,10 @@ void loop_thread2() {
 }
 
 void loop() {
-  if(iotsupport) {
+  /*if(iotsupport) {
     ArduinoCloud.update();
-  }
+  }*/
+  //BLE.poll();
   defender.equipment.check_button_states();
   ++looper;
 

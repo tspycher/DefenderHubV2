@@ -2,14 +2,11 @@
 
 float Defender::outside_temperature = 0.0;
 float Defender::outside_humidity = 0.0;
+signed int Defender::outside_rssi = 0;
+
 float Defender::inside_temperature = 0.0;
 float Defender::inside_humidity = 0.0;
-
-
-void blubb(BLEDevice central) {
-  Serial.print("Discovered event from BLE Device with Mac: ");
-  Serial.println(central.address());
-}
+signed int Defender::inside_rssi = 0;
 
 Defender::Defender() : equipment(Equipment()), latitude(0.0), longitude(0.0), altitude(0.0), gpsspeed(0.0), course(0.0), satellites(999) {
 
@@ -25,40 +22,24 @@ void Defender::begin() {
   Serial1.begin(9600);
   Serial.println("***** initalized gps classes");
 
+  equipment.begin();
+  Serial.println("***** Equipment initialized");
 
   if (!BLE.begin()) {
     Serial.println("starting Bluetooth® Low Energy module failed!");
     while (1);
   }
-
-  // Setting up Colord LED
-  WiFiDrv::pinMode(25, OUTPUT);
-  WiFiDrv::pinMode(26, OUTPUT);
-  WiFiDrv::pinMode(27, OUTPUT);
-
-  // some fancy loading indicator
-  for(int i = 0; i < 150; ++i) {
-    set_internal_rgb_led(0,i,0);
-    delay(5);
-  }
-  set_internal_rgb_led(0,0,0);
-
-  Serial.println("***** internal LED initialized");
-
-  equipment.begin();
-  Serial.println("***** Equipment initialized");
-
-  Serial.println("***** initalized ble module");
-  BLE.setEventHandler(BLEDiscovered, blubb);
+  BLE.setEventHandler(BLEDiscovered, blePeripheralDiscoveredHandler);
   BLE.scan();
   Serial.println("***** registered ble event handler and startetd scanning");
 }
 
-
 void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
-  bool debug = true;
-  Serial.print("Discovered event from BLE Device with Mac: ");
-  Serial.println(central.address());
+  bool debug = false;
+  if(debug) {
+    Serial.print("Discovered event from BLE Device with Mac: ");
+    Serial.println(central.address());
+  }
 
   if(central.hasManufacturerData() && central.hasAdvertisementData()) {
     // Check PDF From: https://www.bluetooth.com/specifications/assigned-numbers/
@@ -98,6 +79,7 @@ void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
   int payload_start = 8;
 
   float temperature, humidity;
+  signed int rssi;
 
   if (format == 5) { // Data Format 5 Protocol Specification (RAWv2)
     // https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_05.md
@@ -107,6 +89,7 @@ void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
 
     temperature = raw_temperature * 0.005; // Celcius
     humidity = raw_humidity * 0.0025; // Percent
+    rssi = central.rssi();
 
     Serial.print("Temperature: ");
     Serial.print(temperature);
@@ -114,18 +97,26 @@ void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
     Serial.print("Humidity: ");
     Serial.print(humidity);
     Serial.print("% ");
+    Serial.print("RSSI: ");
+    Serial.print(rssi);
+    Serial.print("db");
     Serial.println();
   } else {
     Serial.print("Unknown Data Format from RuuviTag received: ");
     Serial.println(format);
+    temperature = 0.0; // Celcius
+    humidity = 0.0; // Percent
+    rssi = central.rssi();
   }
 
   if(central.address() == "f2:40:f1:bc:69:e0") {
     inside_temperature = temperature;
     inside_humidity = humidity;
-  } else if(central.address() == "eb:4b:fa:41:fa:c5") {
+    inside_rssi = rssi;
+  } else if(central.address() == "eb:4b:fa:41:fa:c5") { 
     outside_temperature = temperature;
     outside_humidity = humidity;
+    outside_rssi = rssi;
   } else {
     Serial.print("This RuuviTag is unkown to me");
   }
@@ -258,7 +249,8 @@ void Defender::read_433() {
 }
 
 void Defender::set_internal_rgb_led(int r, int g, int b) {
-  WiFiDrv::analogWrite(25, r); // red
+  /*WiFiDrv::analogWrite(25, r); // red
   WiFiDrv::analogWrite(26, g); // green
   WiFiDrv::analogWrite(27, b); // blue
+  */
 }

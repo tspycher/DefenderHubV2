@@ -17,10 +17,6 @@
 #include <RCSwitch.h>
 #include <TinyGPSPlus.h>
 
-// to interact with the LED
-#include <WiFiNINA.h>
-#include <utility/wifi_drv.h>
-
 #include "Equipment.h"
 
 class Defender {
@@ -47,8 +43,11 @@ public:
 
   static float outside_temperature;
   static float outside_humidity;
+  static signed int outside_rssi;
   static float inside_temperature;
   static float inside_humidity;
+  static signed int inside_rssi;
+
   Equipment equipment;
 
 private:

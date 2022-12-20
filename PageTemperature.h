@@ -20,6 +20,9 @@ public:
 private:
   float inside_temperature;
   float outside_temperature;
+
+  float inside_humidity;
+  float outside_humidity;
 };
 
 #endif //DEFENDERHUB_TEMPERATURE_H
