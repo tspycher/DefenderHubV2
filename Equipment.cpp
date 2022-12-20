@@ -4,9 +4,20 @@
 
 #include "Equipment.h"
 
+// CONFIGURING RELAYS
+struct Relay relay0 = {0,0, "Radio", true, false, false};
+struct Relay relay1 = {1,1, "Light1", false, false, true};
+struct Relay relay2 = {2,2, "Light2", false, false, true};
+struct Relay relay3 = {3,3, "Light3", false, false, true};
+struct Relay relay4 = {4,4, "Light Inside", false, false, true};
+struct Relay relay5 = {5,5, "Other", false, false, true};
+struct Relay relay6 = {6,6, "This", false, false, true};
+struct Relay relay7 = {7,7, "That", false, false, true};
+Relay _relays[8]  = {relay0, relay1, relay2, relay3, relay4, relay5, relay6, relay7};
 
-Equipment::Equipment(DefenderMenu& menu, Relay *relays, int num_relays) : menu(menu), relays(relays), num_relays(num_relays) {
-    
+
+Equipment::Equipment(): relays(_relays),  num_relays(8) {
+
 }
 
 void Equipment::begin() {
@@ -70,11 +81,6 @@ void Equipment::check_button_states() {
           }
         }
       }
-
-      //if (state == LOW) {
-      //    digitalToggle(*extend_switches, relays[r].switch_pin);
-      //    delay(200);
-      //}
     }
 }
 
@@ -104,13 +110,13 @@ void Equipment::turn_off(int index) {
     return;
   }
 
-  menu.show_message(get_name(index).c_str(), "Turned OFF");
+  //menu.show_message(get_name(index).c_str(), "Turned OFF");
   Serial.print("Turning off: ");
   Serial.println(get_name(index));
   digitalWrite(*extend_relais, relays[index].relay_pin, HIGH);
   relays[index].is_on = false;
   delay(2000);
-  menu.redraw_display();
+  //menu.redraw_display();
 }
 
 void Equipment::turn_on(int index) {
@@ -118,13 +124,13 @@ void Equipment::turn_on(int index) {
     return;
   }
 
-  menu.show_message(get_name(index).c_str(), "Turned ON");
+  //menu.show_message(get_name(index).c_str(), "Turned ON");
   Serial.print("Turning on: ");
   Serial.println(get_name(index));
   digitalWrite(*extend_relais, relays[index].relay_pin, LOW);
   relays[index].is_on = true;
   delay(2000);
-  menu.redraw_display();
+  //menu.redraw_display();
 }
 
 void Equipment::toggle(int index) {

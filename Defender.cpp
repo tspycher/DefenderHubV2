@@ -5,9 +5,49 @@ float Defender::outside_humidity = 0.0;
 float Defender::inside_temperature = 0.0;
 float Defender::inside_humidity = 0.0;
 
-Defender::Defender() : latitude(0.0), longitude(0.0), altitude(0.0), gpsspeed(0.0), course(0.0), satellites(999) {
+Defender::Defender() : equipment(Equipment()), latitude(0.0), longitude(0.0), altitude(0.0), gpsspeed(0.0), course(0.0), satellites(999) {
 
 }
+
+void Defender::begin() {
+  Serial.println("*** initalizing Defender Class");
+  receiver = new RCSwitch();
+  receiver->enableReceive(RX_PIN);  // Receiver on interrupt 0 => that is pin #2
+  Serial.println("***** initalized 433mhz receiver");
+
+  gps = new TinyGPSPlus();
+  Serial1.begin(9600);
+  Serial.println("***** initalized gps classes");
+
+
+  if (!BLE.begin()) {
+    Serial.println("starting Bluetooth® Low Energy module failed!");
+    while (1);
+  }
+
+  Serial.println("***** initalized ble module");
+  BLE.setEventHandler(BLEDiscovered, blePeripheralDiscoveredHandler);
+  BLE.scan();
+  Serial.println("***** registered ble event handler and startetd scanning");
+
+
+  WiFiDrv::pinMode(25, OUTPUT);
+  WiFiDrv::pinMode(26, OUTPUT);
+  WiFiDrv::pinMode(27, OUTPUT);
+
+  // some fancy loading indicator
+  for(int i = 0; i < 150; ++i) {
+    set_internal_rgb_led(0,i,0);
+    delay(5);
+  }
+  set_internal_rgb_led(0,0,0);
+
+  Serial.println("***** internal LED initialized");
+
+  equipment.begin();
+  Serial.println("***** Equipment initialized");
+}
+
 
 void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
   bool debug = true;
@@ -83,42 +123,6 @@ void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
   }
 }
 
-void Defender::begin() {
-  Serial.println("*** initalizing Defender Class");
-  receiver = new RCSwitch();
-  receiver->enableReceive(RX_PIN);  // Receiver on interrupt 0 => that is pin #2
-  Serial.println("***** initalized 433mhz receiver");
-
-  gps = new TinyGPSPlus();
-  Serial1.begin(9600);
-  Serial.println("***** initalized gps classes");
-
-
-  if (!BLE.begin()) {
-    Serial.println("starting Bluetooth® Low Energy module failed!");
-    while (1);
-  }
-
-  Serial.println("***** initalized ble module");
-  BLE.setEventHandler(BLEDiscovered, blePeripheralDiscoveredHandler);
-  BLE.scan();
-  Serial.println("***** registered ble event handler and startetd scanning");
-
-
-  WiFiDrv::pinMode(25, OUTPUT);
-  WiFiDrv::pinMode(26, OUTPUT);
-  WiFiDrv::pinMode(27, OUTPUT);
-
-  // some fancy loading indicator
-  for(int i = 0; i < 150; ++i) {
-    set_internal_rgb_led(0,i,0);
-    delay(5);
-  }
-  set_internal_rgb_led(0,0,0);
-
-  Serial.println("***** internal LED initialized");
-
-}
 
 void Defender::update(bool radio, bool gps, bool obd, bool ble) {
   int max_brightnes = 20;

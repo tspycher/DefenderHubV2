@@ -10,7 +10,6 @@
 
 #include <pcf8574.h>
 #include <Adafruit_SSD1351.h>
-#include "DefenderMenu.h"
 
 struct Relay {
     int relay_pin;
@@ -23,11 +22,8 @@ struct Relay {
 
 class Equipment {
 public:
-  Equipment(DefenderMenu &menu, Relay *relays, int num_relays);
+  Equipment();
   void begin();
-
-  //void turn_off(int index, void (*func)(char*, int));
-  //void turn_on(int index, void (*func)(char*, int));
   void toggle(int index);
 
   void turn_off(int index);
@@ -40,13 +36,10 @@ public:
   bool check_if_active(int index);
 
 private:
-
   Relay *relays;
   int num_relays;
   PCF8574 *extend_relais;
   PCF8574 *extend_switches;
-
-  DefenderMenu& menu;
 };
 
 

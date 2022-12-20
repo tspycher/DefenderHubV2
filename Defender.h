@@ -21,6 +21,7 @@
 #include <WiFiNINA.h>
 #include <utility/wifi_drv.h>
 
+#include "Equipment.h"
 
 
 class Defender {
@@ -49,6 +50,7 @@ public:
   static float outside_humidity;
   static float inside_temperature;
   static float inside_humidity;
+  Equipment equipment;
 
 private:
   RCSwitch *receiver;
