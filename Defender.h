@@ -23,7 +23,6 @@
 
 #include "Equipment.h"
 
-
 class Defender {
 public:
   Defender();
@@ -55,7 +54,7 @@ public:
 private:
   RCSwitch *receiver;
   TinyGPSPlus *gps;
-  
+
   void set_internal_rgb_led(int r = 0, int g = 0, int b = 0);
 
   void read_433();

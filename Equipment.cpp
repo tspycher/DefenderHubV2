@@ -49,6 +49,12 @@ void Equipment::begin() {
   }
 }
 
+void Equipment::registerEquipmentHandler(EquipmentHandler handler) {
+  Serial.println("Handler registered");
+  _handler = handler;
+}
+
+
 void Equipment::check_button_states() {
     int state;
     for (int r=0; r < num_relays; ++r) {
@@ -107,33 +113,46 @@ bool Equipment::check_if_active(int index) {
 
 void Equipment::turn_off(int index) {
   if(!check_if_active(index)) {
+    if(_handler) {
+      _handler(get_name(index), EVENT_EQUIPMENT_DISABLED);
+      _handler(get_name(index), EVENT_FINISH);
+    }
     return;
   }
 
-  //menu.show_message(get_name(index).c_str(), "Turned OFF");
+  if(_handler)
+    _handler(get_name(index), EVENT_TURN_OFF);
   Serial.print("Turning off: ");
   Serial.println(get_name(index));
   digitalWrite(*extend_relais, relays[index].relay_pin, HIGH);
   relays[index].is_on = false;
-  delay(2000);
-  //menu.redraw_display();
+  if(_handler)
+    _handler(get_name(index), EVENT_FINISH);
 }
 
 void Equipment::turn_on(int index) {
   if(!check_if_active(index)) {
+    if(_handler) {
+      _handler(get_name(index), EVENT_EQUIPMENT_DISABLED);
+      _handler(get_name(index), EVENT_FINISH);
+    }
     return;
   }
 
-  //menu.show_message(get_name(index).c_str(), "Turned ON");
+  if(_handler)
+    _handler(get_name(index), EVENT_TURN_ON);
   Serial.print("Turning on: ");
   Serial.println(get_name(index));
   digitalWrite(*extend_relais, relays[index].relay_pin, LOW);
   relays[index].is_on = true;
-  delay(2000);
-  //menu.redraw_display();
+  if(_handler)
+    _handler(get_name(index), EVENT_FINISH);
 }
 
 void Equipment::toggle(int index) {
+  if(_handler)
+    _handler(get_name(index), EVENT_TOGGLE);
+
   if(is_on(index)) {
     turn_off(index);
   } else {

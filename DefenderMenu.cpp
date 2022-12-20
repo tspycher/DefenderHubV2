@@ -65,7 +65,7 @@ void DefenderMenu::draw_base_menu(const char title[]) {
   oled.drawLine(0, y-3, oled.width(), y-3, GREEN);
 }
 
-void DefenderMenu::show_message(const char message[], const char message2[]) {
+void DefenderMenu::show_message(const char message[], const char message2[], int color) {
   int margin_top = 40;
   int margin_left = 5;
   int line_margin = 2;
@@ -73,15 +73,15 @@ void DefenderMenu::show_message(const char message[], const char message2[]) {
   // blackout background of the popup
   oled.fillRect(margin_left, margin_top, oled.width()-(2*margin_left), oled.height()-(2*margin_top), BLACK);
   // top
-  oled.drawFastHLine(margin_left+line_margin,margin_top+line_margin, oled.width()-(2*margin_left)-(2*line_margin), RED);
+  oled.drawFastHLine(margin_left+line_margin,margin_top+line_margin, oled.width()-(2*margin_left)-(2*line_margin), color);
   // bottom
-  oled.drawFastHLine(margin_left+line_margin, oled.height()-margin_top-line_margin, oled.width()-(2*margin_left)-(2*line_margin)+1, RED);
+  oled.drawFastHLine(margin_left+line_margin, oled.height()-margin_top-line_margin, oled.width()-(2*margin_left)-(2*line_margin)+1, color);
   // left
-  oled.drawFastVLine(margin_left+line_margin,margin_top+line_margin, oled.height()-(2*margin_top)-(2*line_margin), RED);
+  oled.drawFastVLine(margin_left+line_margin,margin_top+line_margin, oled.height()-(2*margin_top)-(2*line_margin), color);
   // right
-  oled.drawFastVLine(oled.width()-margin_left-line_margin,margin_top+line_margin, oled.height()-(2*margin_top)-(2*line_margin)+1, RED);
+  oled.drawFastVLine(oled.width()-margin_left-line_margin,margin_top+line_margin, oled.height()-(2*margin_top)-(2*line_margin)+1, color);
 
-  oled.setTextColor(RED);
+  oled.setTextColor(color);
   oled.setTextSize(1);
   oled.setCursor(margin_left*3, oled.height()/2-3-7);
   oled.print(message);

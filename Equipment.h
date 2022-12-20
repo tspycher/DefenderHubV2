@@ -9,7 +9,15 @@
 #define ADDRESS_PCF8574_1 0x21
 
 #include <pcf8574.h>
-#include <Adafruit_SSD1351.h>
+
+#define EVENT_FINISH 0
+#define EVENT_TURN_ON 1
+#define EVENT_TURN_OFF 2
+#define EVENT_TOGGLE 3
+#define EVENT_EQUIPMENT_DISABLED 8
+#define EVENT_ERROR 9
+
+typedef void (*EquipmentHandler)(String name, int event);
 
 struct Relay {
     int relay_pin;
@@ -24,6 +32,8 @@ class Equipment {
 public:
   Equipment();
   void begin();
+
+  void registerEquipmentHandler(EquipmentHandler handler);
   void toggle(int index);
 
   void turn_off(int index);
@@ -36,6 +46,7 @@ public:
   bool check_if_active(int index);
 
 private:
+  EquipmentHandler _handler;
   Relay *relays;
   int num_relays;
   PCF8574 *extend_relais;

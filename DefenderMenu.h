@@ -35,7 +35,7 @@ public:
   void update_display(bool force = false);
   bool display_update_required();
 
-  void show_message(const char message[], const char message2[]); 
+  void show_message(const char message[], const char message2[], int color = RED); 
   void show_status_indicator(int color = RED);
   void hide_status_indicator();
   bool is_status_indicator_shown() { return status_indicator_shown; }

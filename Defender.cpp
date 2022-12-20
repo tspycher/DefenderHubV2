@@ -5,6 +5,12 @@ float Defender::outside_humidity = 0.0;
 float Defender::inside_temperature = 0.0;
 float Defender::inside_humidity = 0.0;
 
+
+void blubb(BLEDevice central) {
+  Serial.print("Discovered event from BLE Device with Mac: ");
+  Serial.println(central.address());
+}
+
 Defender::Defender() : equipment(Equipment()), latitude(0.0), longitude(0.0), altitude(0.0), gpsspeed(0.0), course(0.0), satellites(999) {
 
 }
@@ -25,12 +31,7 @@ void Defender::begin() {
     while (1);
   }
 
-  Serial.println("***** initalized ble module");
-  BLE.setEventHandler(BLEDiscovered, blePeripheralDiscoveredHandler);
-  BLE.scan();
-  Serial.println("***** registered ble event handler and startetd scanning");
-
-
+  // Setting up Colord LED
   WiFiDrv::pinMode(25, OUTPUT);
   WiFiDrv::pinMode(26, OUTPUT);
   WiFiDrv::pinMode(27, OUTPUT);
@@ -46,11 +47,18 @@ void Defender::begin() {
 
   equipment.begin();
   Serial.println("***** Equipment initialized");
+
+  Serial.println("***** initalized ble module");
+  BLE.setEventHandler(BLEDiscovered, blubb);
+  BLE.scan();
+  Serial.println("***** registered ble event handler and startetd scanning");
 }
 
 
 void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
   bool debug = true;
+  Serial.print("Discovered event from BLE Device with Mac: ");
+  Serial.println(central.address());
 
   if(central.hasManufacturerData() && central.hasAdvertisementData()) {
     // Check PDF From: https://www.bluetooth.com/specifications/assigned-numbers/
@@ -115,7 +123,7 @@ void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
   if(central.address() == "f2:40:f1:bc:69:e0") {
     inside_temperature = temperature;
     inside_humidity = humidity;
-  } else if(central.address() == "00:00:00:00::00:00") {
+  } else if(central.address() == "eb:4b:fa:41:fa:c5") {
     outside_temperature = temperature;
     outside_humidity = humidity;
   } else {
