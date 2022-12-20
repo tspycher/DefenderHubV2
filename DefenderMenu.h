@@ -13,6 +13,7 @@
 #include "PageGps.h"
 #include "PageCompass.h"
 #include "PageEngine.h"
+#include "PageEquipment.h"
 #include "PageVersion.h"
 
 class DefenderMenu {

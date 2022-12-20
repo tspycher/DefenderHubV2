@@ -13,6 +13,10 @@ void DefenderMenu::begin() {
   Serial.println("****** initialized Temperature Page");
   ++num_pages;
 
+  pages[num_pages] = new PageEquipment(oled, car);
+  Serial.println("****** initialized Equipment Page");
+  ++num_pages;
+
   pages[num_pages] = new PageEngine(oled, car);
   Serial.println("****** initialized Engine Page");
   ++num_pages;
