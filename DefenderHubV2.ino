@@ -35,6 +35,11 @@ Defender defender = Defender();
 DefenderMenu menu = DefenderMenu(oled, defender);
 
 void equipment_button_pressed(String name, int event) {
+  if(menu.get_current_page()->get_page_name() == "Equipment") {
+    menu.update_display();
+    return;
+  }
+
   switch (event) {
     case EVENT_FINISH:
       delay(2000);

@@ -126,6 +126,7 @@ void Equipment::turn_off(int index) {
   Serial.println(get_name(index));
   digitalWrite(*extend_relais, relays[index].relay_pin, HIGH);
   relays[index].is_on = false;
+  last_change = millis();
   if (_handler)
     _handler(get_name(index), EVENT_FINISH);
 }
@@ -145,6 +146,8 @@ void Equipment::turn_on(int index) {
   Serial.println(get_name(index));
   digitalWrite(*extend_relais, relays[index].relay_pin, LOW);
   relays[index].is_on = true;
+  last_change = millis();
+
   if (_handler)
     _handler(get_name(index), EVENT_FINISH);
 }

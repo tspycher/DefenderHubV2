@@ -6,6 +6,7 @@
 #define _DEFENDERHUB_PAGEEQUIPMENT_H
 
 #include "Page.h"
+#include "Colors.h"
 
 class PageEquipment : public Page {
 public:
@@ -15,6 +16,8 @@ public:
   bool needs_display_update();
   void update_display();
   String get_page_name();
+private:
+  unsigned long int last_change;
 };
 
 #endif  //_DEFENDERHUB_PAGEEQUIPMENT_H

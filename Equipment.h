@@ -45,7 +45,9 @@ public:
   bool is_on(int index);
   bool check_if_active(int index);
 
+  unsigned long int get_last_change() { return last_change; };
 private:
+  unsigned long int last_change;
   EquipmentHandler _handler;
   Relay *relays;
   int num_relays;
