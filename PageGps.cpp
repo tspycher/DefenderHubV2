@@ -10,7 +10,11 @@ String PageGps::get_page_name() {
 
 
 bool PageGps::needs_display_update() {
-  return true;
+  if(millis() - last_update >= 5000) {
+    last_update = millis();
+    return true;
+  }
+  return false;
 }
 
 void PageGps::update_display() {

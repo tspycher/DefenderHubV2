@@ -10,7 +10,11 @@ String PageCompass::get_page_name() {
 
 
 bool PageCompass::needs_display_update() {
-  return true;
+  if(millis() - last_update >= 1000) {
+    last_update = millis();
+    return true;
+  }
+  return false;
 }
 
 

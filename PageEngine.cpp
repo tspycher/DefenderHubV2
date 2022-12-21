@@ -10,7 +10,11 @@ String PageEngine::get_page_name() {
 
 
 bool PageEngine::needs_display_update() {
-  return true;
+  if(millis() - last_update >= 500) {
+    last_update = millis();
+    return true;
+  }
+  return false;
 }
 
 
