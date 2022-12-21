@@ -34,6 +34,41 @@ void Defender::begin() {
   Serial.println("***** registered ble event handler and startetd scanning");
 }
 
+void Defender::debug_print() {
+  Serial.println("***** DEBUG OUTPUT START ***** ");
+  Serial.println("GPS:");
+  Serial.print("Latitude: ");
+  Serial.println(latitude);
+  Serial.print("Longitude: ");
+  Serial.println(longitude);
+  Serial.print("Alt: ");
+  Serial.println(altitude);
+  Serial.print("Speed: ");
+  Serial.println(gpsspeed);
+  Serial.print("Course: ");
+  Serial.println(course);
+  Serial.print("Satellites: ");
+  Serial.println(satellites);
+  Serial.println("");
+
+  Serial.println("Temperature:");
+  Serial.print("Outside Temperature: ");
+  Serial.println(outside_temperature);
+  Serial.print("Outside Humidity: ");
+  Serial.println(outside_humidity);
+  Serial.print("Outside RSSI: ");
+  Serial.println(outside_rssi);
+
+  Serial.print("Inside Temperature: ");
+  Serial.println(inside_temperature);
+  Serial.print("Inside Temperature: ");
+  Serial.println(inside_humidity);
+  Serial.print("Inside Temperature: ");
+  Serial.println(inside_rssi);
+
+  Serial.println("***** DEBUG OUTPUT FINISH ***** ");
+}
+
 void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
   bool debug = false;
   if(debug) {

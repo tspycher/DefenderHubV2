@@ -9,10 +9,8 @@ String PageTemperature::get_page_name() {
 }
 
 bool PageTemperature::needs_display_update() {
-  if(inside_temperature == car.get_inside_temperature()) {
-    if(outside_temperature == car.get_outside_temperature()) {
-      return false;
-    }
+  if(inside_temperature == car.get_inside_temperature() && outside_temperature == car.get_outside_temperature()) {
+    return false;
   }
 
   inside_temperature = car.get_inside_temperature();

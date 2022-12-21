@@ -25,7 +25,8 @@ public:
   void begin();
 
   void update(bool radio = true, bool gps = true, bool obd = true, bool ble = true);
-
+  void debug_print();
+  
   float get_outside_temperature();
   float get_inside_temperature();
   float get_outside_humidity();
