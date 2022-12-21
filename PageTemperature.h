@@ -11,11 +11,12 @@
 
 class PageTemperature : public Page {
 public:
-    PageTemperature(Adafruit_SSD1351 &oled, Defender &car) : Page(oled, car) {};
+  PageTemperature(Adafruit_SSD1351 &oled, Defender &car)
+    : Page(oled, car){};
 
-    bool needs_display_update();
-    void update_display();
-    String get_page_name();
+  bool needs_display_update();
+  void update_display();
+  String get_page_name();
 
 private:
   float inside_temperature;
@@ -25,4 +26,4 @@ private:
   float outside_humidity;
 };
 
-#endif //DEFENDERHUB_TEMPERATURE_H
+#endif  //DEFENDERHUB_TEMPERATURE_H

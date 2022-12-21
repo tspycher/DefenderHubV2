@@ -8,8 +8,8 @@ float Defender::inside_temperature = 0.0;
 float Defender::inside_humidity = 0.0;
 signed int Defender::inside_rssi = 0;
 
-Defender::Defender() : equipment(Equipment()), latitude(0.0), longitude(0.0), altitude(0.0), gpsspeed(0.0), course(0.0), satellites(999) {
-
+Defender::Defender()
+  : equipment(Equipment()), latitude(0.0), longitude(0.0), altitude(0.0), gpsspeed(0.0), course(0.0), satellites(999) {
 }
 
 void Defender::begin() {
@@ -27,7 +27,8 @@ void Defender::begin() {
 
   if (!BLE.begin()) {
     Serial.println("starting Bluetooth® Low Energy module failed!");
-    while (1);
+    while (1)
+      ;
   }
   BLE.setEventHandler(BLEDiscovered, blePeripheralDiscoveredHandler);
   BLE.scan();
@@ -71,18 +72,18 @@ void Defender::debug_print() {
 
 void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
   bool debug = false;
-  if(debug) {
+  if (debug) {
     Serial.print("Discovered event from BLE Device with Mac: ");
     Serial.println(central.address());
   }
 
-  if(central.hasManufacturerData() && central.hasAdvertisementData()) {
+  if (central.hasManufacturerData() && central.hasAdvertisementData()) {
     // Check PDF From: https://www.bluetooth.com/specifications/assigned-numbers/
     // 0x0499 Ruuvi Innovations Ltd.
     // Decimal: 4 153
     uint8_t manufacturer[central.manufacturerDataLength()];
     central.manufacturerData(manufacturer, central.manufacturerDataLength());
-    if((int)manufacturer[0] == 153 && (int)manufacturer[1] == 4) {
+    if ((int)manufacturer[0] == 153 && (int)manufacturer[1] == 4) {
       Serial.print("Discovered event from RuuviTag with Mac: ");
       Serial.println(central.address());
     } else {
@@ -95,12 +96,12 @@ void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
       return;
     }
   } else {
-    if(debug) {
+    if (debug) {
       Serial.print("Discovered Device with mac: ");
       Serial.print(central.address());
       Serial.println(" but does no advertised data or manufacturer data");
     }
-     // no manufacturer Data available
+    // no manufacturer Data available
     return;
   }
 
@@ -116,14 +117,14 @@ void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
   float temperature, humidity;
   signed int rssi;
 
-  if (format == 5) { // Data Format 5 Protocol Specification (RAWv2)
+  if (format == 5) {  // Data Format 5 Protocol Specification (RAWv2)
     // https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_05.md
 
-    int16_t raw_temperature = (int16_t)value[payload_start]<<8 | (int16_t)value[payload_start+1];
-    int16_t raw_humidity = (int16_t)value[payload_start+2]<<8 | (int16_t)value[payload_start+3];
+    int16_t raw_temperature = (int16_t)value[payload_start] << 8 | (int16_t)value[payload_start + 1];
+    int16_t raw_humidity = (int16_t)value[payload_start + 2] << 8 | (int16_t)value[payload_start + 3];
 
-    temperature = raw_temperature * 0.005; // Celcius
-    humidity = raw_humidity * 0.0025; // Percent
+    temperature = raw_temperature * 0.005;  // Celcius
+    humidity = raw_humidity * 0.0025;       // Percent
     rssi = central.rssi();
 
     Serial.print("Temperature: ");
@@ -139,16 +140,16 @@ void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
   } else {
     Serial.print("Unknown Data Format from RuuviTag received: ");
     Serial.println(format);
-    temperature = 0.0; // Celcius
-    humidity = 0.0; // Percent
+    temperature = 0.0;  // Celcius
+    humidity = 0.0;     // Percent
     rssi = central.rssi();
   }
 
-  if(central.address() == "f2:40:f1:bc:69:e0") {
+  if (central.address() == "f2:40:f1:bc:69:e0") {
     inside_temperature = temperature;
     inside_humidity = humidity;
     inside_rssi = rssi;
-  } else if(central.address() == "eb:4b:fa:41:fa:c5") { 
+  } else if (central.address() == "eb:4b:fa:41:fa:c5") {
     outside_temperature = temperature;
     outside_humidity = humidity;
     outside_rssi = rssi;
@@ -160,24 +161,23 @@ void Defender::blePeripheralDiscoveredHandler(BLEDevice central) {
 
 void Defender::update(bool radio, bool gps, bool obd, bool ble) {
   int max_brightnes = 20;
-  if(radio) {
-    set_internal_rgb_led(max_brightnes,0,0);
+  if (radio) {
+    set_internal_rgb_led(max_brightnes, 0, 0);
     read_433();
   }
-  if(gps) {
-    set_internal_rgb_led(max_brightnes,max_brightnes,0);
+  if (gps) {
+    set_internal_rgb_led(max_brightnes, max_brightnes, 0);
     read_gps();
   }
-  if(obd) {
+  if (obd) {
     set_internal_rgb_led(0, max_brightnes, max_brightnes);
     read_obd();
   }
-  if(ble) {
-    set_internal_rgb_led(0,0,max_brightnes);
+  if (ble) {
+    set_internal_rgb_led(0, 0, max_brightnes);
     read_ble();
   }
-  set_internal_rgb_led(0,0,0);
-
+  set_internal_rgb_led(0, 0, 0);
 }
 
 float Defender::get_inside_temperature() {
@@ -254,7 +254,6 @@ void Defender::read_ble() {
 }
 
 void Defender::read_obd() {
-  
 }
 
 void Defender::read_433() {
@@ -264,7 +263,7 @@ void Defender::read_433() {
     int identifier = (value / 100000000);
     receiver->resetAvailable();
 
-    switch(identifier) {
+    switch (identifier) {
       case IDENTIFIER_TEMPERATURE:
         inside_temperature = (value % 100000000 / 1000000.0) - 20.0;
         outside_temperature = (value % 10000 / 100.0) - 20.0;

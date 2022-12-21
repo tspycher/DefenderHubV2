@@ -14,7 +14,7 @@ bool PageVersion::needs_display_update() {
 }
 
 void PageVersion::update_display() {
-  update_label("Version", 1.0, 0,20,7, false);
-  update_label("Buildtime", "unknown", 0,45,7, false);
-  update_label("Copyright", "TSpycher", 0,70,7, false);
+  update_label("Version", 1.0, 0, 20, 7, false);
+  update_label("Buildtime", "unknown", 0, 45, 7, false);
+  update_label("Copyright", "TSpycher", 0, 70, 7, false);
 }

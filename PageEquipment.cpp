@@ -14,5 +14,14 @@ bool PageEquipment::needs_display_update() {
 }
 
 void PageEquipment::update_display() {
-  update_label("Equipment", "dingdong", 0,20,7, false);
+  int row = 0;
+  int col = 0;
+  for (int i = 0; i < car.equipment.get_num_relays(); ++i) {
+    if (i % 4 == 0) {
+      row = 0;
+      ++col;
+    }
+    update_label("Equipment", i, col * (oled.width() / 2), row * 10, 7, false);
+    ++row;
+  }
 }

@@ -20,12 +20,12 @@
 typedef void (*EquipmentHandler)(String name, int event);
 
 struct Relay {
-    int relay_pin;
-    int switch_pin;
-    String name;
-    bool active;
-    bool is_on;
-    bool is_on_off_button;
+  int relay_pin;
+  int switch_pin;
+  String name;
+  bool active;
+  bool is_on;
+  bool is_on_off_button;
 };
 
 class Equipment {
@@ -54,4 +54,4 @@ private:
 };
 
 
-#endif //DEFENDERHUB_EQUIPMENT_H
+#endif  //DEFENDERHUB_EQUIPMENT_H

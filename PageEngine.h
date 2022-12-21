@@ -9,11 +9,12 @@
 
 class PageEngine : public Page {
 public:
-    PageEngine(Adafruit_SSD1351 &oled, Defender &car) : Page(oled, car) {};
+  PageEngine(Adafruit_SSD1351 &oled, Defender &car)
+    : Page(oled, car){};
 
-    bool needs_display_update();
-    void update_display();
-    String get_page_name();
+  bool needs_display_update();
+  void update_display();
+  String get_page_name();
 };
 
-#endif //_DEFENDERHUB_ENGINE_H
+#endif  //_DEFENDERHUB_ENGINE_H

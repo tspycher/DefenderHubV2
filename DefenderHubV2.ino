@@ -1,15 +1,15 @@
 #define PSEUDO_THREADS 3
 
-#define SCREEN_WIDTH  128
-#define SCREEN_HEIGHT 128 
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 128
 
 #define BUTTON_SHORT_PRESS 1000
 #define BUTTON_LONG_PRESS 3000
 #define BUTTON_VERY_LONG_PRESS 5000
 
-#define DC_PIN   4
-#define CS_PIN   5
-#define RST_PIN  3
+#define DC_PIN 4
+#define CS_PIN 5
+#define RST_PIN 3
 
 #define BUTTON 1
 
@@ -35,7 +35,7 @@ Defender defender = Defender();
 DefenderMenu menu = DefenderMenu(oled, defender);
 
 void equipment_button_pressed(String name, int event) {
-  switch(event) {
+  switch (event) {
     case EVENT_FINISH:
       delay(2000);
       menu.redraw_display();
@@ -69,24 +69,25 @@ void button_pressed() {
 
 void button_debouncer() {
   if (menu.get_interrupt_switch_page())
-      return;    
+    return;
   int diff = millis() - last_button_signal;
   int diff2 = millis() - last_button_press;
 
   last_button_signal = millis();
 
   if (diff >= 50 and diff <= BUTTON_SHORT_PRESS) {
-      if (diff2 >= BUTTON_SHORT_PRESS/4) {
-          button_pressed();
-          last_button_press = millis();
-      }
+    if (diff2 >= BUTTON_SHORT_PRESS / 4) {
+      button_pressed();
+      last_button_press = millis();
+    }
   }
 }
 
 void setup() {
-  if(devmode) {
+  if (devmode) {
     Serial.begin(9600);
-    while (!Serial);
+    while (!Serial)
+      ;
   }
   Serial.println("* Starting up Defender HUB");
 
@@ -100,18 +101,18 @@ void setup() {
 }
 
 void loop_thread0() {
-  if(looper % 2000 == 0 && devmode) {
+  if (looper % 2000 == 0 && devmode) {
     defender.debug_print();
   }
-  if(menu.perform_interrupt_switch_page()) {
+  if (menu.perform_interrupt_switch_page()) {
     Serial.println("Performed Page Switch");
   }
 }
 
 void loop_thread1() {
-    if(menu.display_update_required()) {
-      menu.update_display(true);
-    }
+  if (menu.display_update_required()) {
+    menu.update_display(true);
+  }
 }
 
 /*void test_equipment() {
@@ -131,7 +132,6 @@ void loop_thread2() {
   menu.show_status_indicator(GREEN);
   defender.update(radio, gps, obd, ble);
   menu.hide_status_indicator();
-
 }
 
 void loop() {
@@ -139,19 +139,19 @@ void loop() {
   ++looper;
 
   int thread = looper % PSEUDO_THREADS;
-    // Loop-Switching to simulate multi threading
+  // Loop-Switching to simulate multi threading
   switch (thread) {
-      case 0:
-          loop_thread0();
-          break;
-      case 1:
-          loop_thread1();
-          break;
-      case 2:
-          loop_thread2();
-          break;
-      default:
-          Serial.println("No thread registered for id: "+thread);
-          break;
+    case 0:
+      loop_thread0();
+      break;
+    case 1:
+      loop_thread1();
+      break;
+    case 2:
+      loop_thread2();
+      break;
+    default:
+      Serial.println("No thread registered for id: " + thread);
+      break;
   }
 }
