@@ -15,6 +15,8 @@ public:
   bool needs_display_update();
   void update_display();
   String get_page_name();
+private:
+  unsigned long int last_update;
 };
 
 #endif  //_DEFENDERHUB_VERSION_H

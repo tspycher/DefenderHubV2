@@ -23,7 +23,7 @@
 #include "Equipment.h"
 #include "Colors.h"
 
-bool devmode = true;
+bool devmode = false;
 bool iotsupport = false;
 
 unsigned long looper = 0;
@@ -64,10 +64,10 @@ void equipment_button_pressed(String name, int event) {
 }
 
 void button_pressed() {
-  Serial.println("Switch Page by Interrupt");
+  /*Serial.println("Switch Page by Interrupt");
   menu.show_message("Next", "Page", GREEN);
   delay(1000);
-
+  */
   menu.switch_page_by_interrupt();
 }
 
