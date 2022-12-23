@@ -222,6 +222,35 @@ int Defender::get_satellites() {
   return satellites;
 }
 
+double Defender::get_distance_left() {
+  if(millis() - last_distance_reading >= 30000) {
+    return 9.99;
+  }
+  return distance_left / 10;
+}
+
+double Defender::get_distance_right() {
+  if(millis() - last_distance_reading >= 30000) {
+    return 9.99;
+  }
+  return distance_right / 10;
+}
+
+double Defender::get_distance_approximation_left() {
+  if(millis() - last_distance_reading >= 30000) {
+    return 9.99;
+  }
+  return distance_approximation_left;
+}
+
+double Defender::get_distance_approximation_right() {
+  if(millis() - last_distance_reading >= 30000) {
+    return 9.99;
+  }
+  return distance_approximation_right;
+}
+
+
 void Defender::read_gps() {
   while (Serial1.available() > 0) {
     gps->encode(Serial1.read());
@@ -271,6 +300,24 @@ void Defender::read_433() {
         Serial.print(inside_temperature);
         Serial.print(" Outside: ");
         Serial.println(outside_temperature);
+        break;
+      case IDENTIFIER_DISTANCE:
+        distance_right = (value % 100000000 / 10000);
+        distance_left = (value % 10000);
+        last_distance_reading = millis();
+        Serial.print(" 433: Received Distance Left: ");
+        Serial.print(distance_left);
+        Serial.print(" Right: ");
+        Serial.println(distance_right);
+        break;
+      case IDENTIFIER_DISTANCE_APPROXIMATION:
+        distance_approximation_right = (value % 100000000 / 10000) / 1000.0;
+        distance_approximation_left = (value % 10000) / 1000.0;
+        last_distance_reading = millis();
+        Serial.print(" 433: Received Distance Approximation Left: ");
+        Serial.print(distance_approximation_left);
+        Serial.print(" Right: ");
+        Serial.println(distance_approximation_right);
         break;
       default:
         Serial.print("433: unknown package received. Value is:");

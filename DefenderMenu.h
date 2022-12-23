@@ -15,6 +15,7 @@
 #include "PageEngine.h"
 #include "PageEquipment.h"
 #include "PageVersion.h"
+#include "PagePdc.h"
 
 class DefenderMenu {
 public:

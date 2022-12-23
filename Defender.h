@@ -11,6 +11,8 @@
 #define GPS_BAUD 9600
 
 #define IDENTIFIER_TEMPERATURE 11
+#define IDENTIFIER_DISTANCE 12
+#define IDENTIFIER_DISTANCE_APPROXIMATION 13
 
 #include <Arduino.h>
 #include <ArduinoBLE.h>
@@ -34,6 +36,11 @@ public:
 
   double get_latitude();
   double get_longitude();
+
+  double get_distance_left();
+  double get_distance_right();
+  double get_distance_approximation_left();
+  double get_distance_approximation_right();
 
   double get_altitude();
   double get_gpsspeed();
@@ -61,6 +68,14 @@ private:
   void read_ble();
   void read_gps();
   void read_obd();
+  
+  double distance_right;
+  double distance_left;
+
+  double distance_approximation_right;
+  double distance_approximation_left;
+
+  unsigned long int last_distance_reading;
 
   double latitude;
   double longitude;

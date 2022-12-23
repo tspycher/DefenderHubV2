@@ -23,7 +23,7 @@
 #include "Equipment.h"
 #include "Colors.h"
 
-bool devmode = false;
+bool devmode = true;
 bool iotsupport = false;
 
 unsigned long looper = 0;
@@ -106,7 +106,7 @@ void setup() {
 }
 
 void loop_thread0() {
-  if (looper % 2000 == 0 && devmode) {
+  if (looper % 10000 == 0 && devmode) {
     defender.debug_print();
   }
   if (menu.perform_interrupt_switch_page()) {
@@ -129,7 +129,7 @@ void loop_thread1() {
 
 void loop_thread2() {
   bool radio, gps, obd, ble;
-  radio = false;
+  radio = true;
   gps = true;
   obd = false;
   ble = true;
